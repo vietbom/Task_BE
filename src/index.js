@@ -1,0 +1,28 @@
+import express from 'express'
+import cors from 'cors'
+import dotenv from 'dotenv'
+import cookieParser from "cookie-parser"
+import userRouter from './routes/User.routes.js'
+import sequelize from './lib/mysql.js'
+import taskRouter from './routes/Task.route.js'
+
+const app = express()
+dotenv.config()
+
+app.use(cookieParser())
+app.use(express.json())
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}))
+
+sequelize.sync()
+const port = process.env.APP_PORT 
+const host = process.env.APP_HOSTNAME || 'localhost'
+
+
+app.use('/user', userRouter)
+app.use('/task', taskRouter)
+app.listen(port, host, () => {
+    console.log(`Server running at http://${host}:${port}`)
+})
