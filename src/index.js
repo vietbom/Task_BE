@@ -10,7 +10,6 @@ import taskRouter from './routes/Task.route.js'
 const ENV = process.env.NODE_ENV || 'development'
 dotenv.config({ path: `.env.${ENV}` })
 
-
 const app = express()
 
 app.use(cookieParser())
@@ -23,6 +22,10 @@ app.use(cors({
 sequelize.sync()
 const port = process.env.APP_PORT 
 const host = process.env.APP_HOSTNAME || 'localhost'
+
+
+console.log("ENV:", process.env.NODE_ENV)
+console.log("DB:", process.env.DATABASE_URL)
 
 
 app.use('/user', userRouter)
