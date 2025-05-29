@@ -6,13 +6,17 @@ import userRouter from './routes/User.routes.js'
 import sequelize from './lib/mysql.js'
 import taskRouter from './routes/Task.route.js'
 
+
+const ENV = process.env.NODE_ENV || 'development'
+dotenv.config({ path: `.env.${ENV}` })
+
+
 const app = express()
-dotenv.config()
 
 app.use(cookieParser())
 app.use(express.json())
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
     credentials: true
 }))
 
