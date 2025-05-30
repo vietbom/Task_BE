@@ -24,10 +24,10 @@ const Task = sequelize.define('Task', {
         defaultValue: "Medium"
     },
     startDate: {
-        type: DataTypes.STRING,
+        type: DataTypes.DATE,
     },
     dueDate: {
-        type: DataTypes.STRING,
+        type: DataTypes.DATE,
     },
     status: {
         type: DataTypes.ENUM("active", "expired", "done"),

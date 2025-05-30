@@ -15,28 +15,43 @@ export const createTask = async (req, res) => {
             return res.status(400).json({ message: "titleTask là bắt buộc" });
         }
 
-        const parsedStartDate = parse(startDate, 'dd-MM-yyyy', new Date())
-        const parsedDueDate = parse(dueDate, 'dd-MM-yyyy', new Date())
+        // Validate date format
+        if (!startDate || !dueDate) {
+            return res.status(400).json({ message: "Start date and due date are required" });
+        }
 
-        const formattedStartDate = format(parsedStartDate, 'yyyy-MM-dd')
-        const formattedDueDate = format(parsedDueDate, 'yyyy-MM-dd')
+        try {
+            const parsedStartDate = new Date(startDate);
+            const parsedDueDate = new Date(dueDate);
 
-        const newTask = await Task.create({
-            titleTask,
-            description,
-            completed: completed || false,
-            priority: priority || 'Medium',
-            startDate: formattedStartDate,
-            dueDate: formattedDueDate,
-            note: note || [],
-            userId,
-        });
+            if (isNaN(parsedStartDate.getTime()) || isNaN(parsedDueDate.getTime())) {
+                return res.status(400).json({ message: "Invalid date format" });
+            }
 
-        res.status(201).json({
-            message: "Tạo task thành công",
-            task: newTask,
-        });
+            if (parsedDueDate < parsedStartDate) {
+                return res.status(400).json({ message: "Due date cannot be before start date" });
+            }
 
+            const newTask = await Task.create({
+                titleTask,
+                description,
+                completed: completed || false,
+                priority: priority || 'Medium',
+                startDate: parsedStartDate,
+                dueDate: parsedDueDate,
+                note: note || [],
+                userId,
+            });
+
+            res.status(201).json({
+                message: "Tạo task thành công",
+                task: newTask,
+            });
+
+        } catch (error) {
+            console.error("Lỗi trong createTask:", error.message);
+            res.status(500).json({ message: "Lỗi Máy Chủ Nội Bộ" });
+        }
     } catch (error) {
         console.error("Lỗi trong createTask:", error.message);
         res.status(500).json({ message: "Lỗi Máy Chủ Nội Bộ" });
